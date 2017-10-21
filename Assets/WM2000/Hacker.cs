@@ -2,8 +2,10 @@
 
 public class Hacker : MonoBehaviour
 {
-    string[] level1Passwords = { "books", "aisle", "self", "password", "font", "borrow" };
+    string menuHint = "Type menu to go back";
+    string[] level1Passwords = { "books", "aisle", "shelf", "password", "font", "borrow" };
     string[] level2Passwords = { "prisoner", "handcuffs", "uniform", "arrest" };
+    string[] level3Passwords = { "starfield", "telescope", "environment", "exploration", "astronauts" };
 
     #region Game state
     int level;
@@ -23,8 +25,9 @@ public class Hacker : MonoBehaviour
         password = "";
         Terminal.ClearScreen();
         Terminal.WriteLine("What would you like to hack into?");
-        Terminal.WriteLine("Press 1 for the local library");
-        Terminal.WriteLine("Press 2 for the police station");
+        Terminal.WriteLine("Press 1 for the local Library");
+        Terminal.WriteLine("Press 2 for the local Police Station");
+        Terminal.WriteLine("Press 3 for NASA Command Station");
         Terminal.WriteLine("Enter your selection:");
     }
 
@@ -33,6 +36,11 @@ public class Hacker : MonoBehaviour
         if (input == "menu") // Can always go direct to main menu
         {
             ShowMainMenu();
+        }
+        else if (input == "quit" || input == "close" || input == "exit")
+        {
+            Terminal.WriteLine("If on web close the tab.");
+            Application.Quit();
         }
         else if (currentScreen == Screen.MainMenu)
         {
@@ -47,11 +55,11 @@ public class Hacker : MonoBehaviour
 
     void RunMainMenu(string input)
     {
-        bool isValidLevelNumber = (input == "1" || input == "2");
+        bool isValidLevelNumber = (input == "1" || input == "2" || input == "3");
         if (isValidLevelNumber)
         {
             level = int.Parse(input);
-            StartGame();
+            AskForPassword();
         }
         else if (input == "007")
         {
@@ -71,11 +79,18 @@ public class Hacker : MonoBehaviour
         }
     }
 
-    void StartGame()
+    void AskForPassword()
     {
         currentScreen = Screen.Password;
         Terminal.ClearScreen();
-        switch(level)
+        SetRandomPassword();
+        Terminal.WriteLine(menuHint);
+        Terminal.WriteLine("Enter your password. Hint: " + password.Anagram());
+    }
+
+    private void SetRandomPassword()
+    {
+        switch (level)
         {
             case 1:
                 password = level1Passwords[Random.Range(0, level1Passwords.Length)];
@@ -83,11 +98,13 @@ public class Hacker : MonoBehaviour
             case 2:
                 password = level2Passwords[Random.Range(0, level2Passwords.Length)];
                 break;
+            case 3:
+                password = level3Passwords[Random.Range(0, level3Passwords.Length)];
+                break;
             default:
                 Debug.LogError("Invalid level number");
                 break;
         }
-        Terminal.WriteLine("Please input your password:");
     }
 
     private void CheckPassword(string input)
@@ -98,7 +115,7 @@ public class Hacker : MonoBehaviour
         }
         else
         {
-            Terminal.WriteLine("Incorrect password. Try again: ");
+            AskForPassword();
         }
     }
 
@@ -122,6 +139,7 @@ public class Hacker : MonoBehaviour
  /____ //
 (_____(/
 "               );
+                Terminal.WriteLine(menuHint + " for a greater     challenge.");
                 break;
             case 2:
                 Terminal.WriteLine("You got the prison key!");
@@ -130,6 +148,21 @@ public class Hacker : MonoBehaviour
 /0 \_______
 \__/-=' = '
 "               );
+                Terminal.WriteLine(menuHint + " for a greater     challenge.");
+                break;
+            case 3:
+                Terminal.WriteLine(
+@"
+ _ __   __ _ ___  __ _
+| '_ \ / _` / __|/ _` |
+| | | | (_| \__ \ (_| |
+|_| |_|\__,_|___)\__,_|");
+                Terminal.WriteLine("Welcome to NASA's Internal System.");
+                Terminal.WriteLine("Congratulations! You've hacked the     highest level of security.");
+                Terminal.WriteLine(menuHint);
+                break;
+            default:
+                Debug.LogError("Invalid level reached");
                 break;
         }
     }
